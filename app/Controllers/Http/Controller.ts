@@ -8,8 +8,13 @@ export default class Controller {
     }
 
     login ({ request, response } : HttpContextContract ) {
+        const USUARIO = request.input('USUARIO')
+        const SENHA   = request.input('SENHA')
+
         return {
-            login : 'sucess',
+            user: USUARIO,
+            pass: SENHA,
+            auth : true,
         };
     }
 }
