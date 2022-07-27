@@ -7,8 +7,8 @@ export default class Controller {
     */
     
     async recuperarEmpresa ({ request, response } : HttpContextContract ) {
-        const CODUSUARIO = request.input('CODUSUARIO')
-        const user = await Database.rawQuery(`
+        const username = request.input('username')
+        const sql = await Database.rawQuery(`
         SELECT                                                                                       
             multi_empresas.CD_MULTI_EMPRESA, multi_empresas.DS_MULTI_EMPRESA EMPRESA           
         FROM                                                                                   
@@ -16,12 +16,16 @@ export default class Controller {
             ,DBAMV.USUARIO_MULTI_EMPRESA     usuario_multi_empresa                              
             ,DBAMV.MULTI_EMPRESAS            multi_empresas                                     
             WHERE                                                                                  
-                usuario.CD_USUARIO = ? AND usuario.SN_ATIVO = 'S'                           
-                AND  usuario.CD_USUARIO = usuario_multi_empresa.CD_ID_USUARIO`
-               , [CODUSUARIO])
+                usuario.CD_USUARIO = :COD_USUARIO AND usuario.SN_ATIVO = 'S'                           
+                AND  usuario.CD_USUARIO = usuario_multi_empresa.CD_ID_USUARIO`, 
+                {
+
+                COD_USUARIO: username
+               
+                })
         
             response.json(
-                user
+                sql
             )
     }
 
@@ -30,7 +34,7 @@ export default class Controller {
     */
     
 
-    login ({ request, response } : HttpContextContract ) {
+    async login ({ request, response } : HttpContextContract ) {
         const USUARIO = request.input('USUARIO')
         const SENHA   = request.input('SENHA')
         response.json({
