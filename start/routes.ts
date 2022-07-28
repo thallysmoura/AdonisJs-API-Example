@@ -4,8 +4,7 @@ Route.group(() => {
     
   Route.get   ('/recuperarEmpresa',   'Controller.recuperarEmpresa')
   Route.post  ('/login',              'Controller.login'           )
-  Route.get  ('/teste',              'Controller.teste'           )
-  
+  Route.get   ('*', () => {return 'unauthorized'}                  )
 
 }).prefix('/api')
 

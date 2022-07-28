@@ -3,12 +3,11 @@ import Database from '@ioc:Adonis/Lucid/Database'
 
 export default class Controller {
     
-    /**
-    * Valida usuário MV
-    */
-    
-    async recuperarEmpresa ({ request, response } : HttpContextContract ) {
-        const username = request.input('username')
+    // ========================== RECUPERAR EMPRESA ( CASO USUÁRIO EXISTIR ) ================================
+
+    async recuperarEmpresa ({ request, response } : HttpContextContract ) 
+    {
+        const username = request.input('username').toUpperCase()
         const sql = await Database.rawQuery(`
         SELECT                                                                                       
             multi_empresas.CD_MULTI_EMPRESA, multi_empresas.DS_MULTI_EMPRESA EMPRESA           
@@ -27,35 +26,33 @@ export default class Controller {
         )
     }
 
-
-    /**
-    * LOG-IN do usuário MV
-    */
-    
-    async login ({ request, response } : HttpContextContract ) {
-        const USUARIO = request.input('USUARIO').toUpperCase();
-        const SENHA = request.input('SENHA')
+    // ========================== VALIDAÇÃO USUÁRIO ================================
+        
+    async login ({ request, response } : HttpContextContract )
+    {
+        const USUARIO   = request.input('USUARIO').toUpperCase();
+        const SENHA     = request.input('SENHA')
 
         let retorno = {};
 
-        if (USUARIO != undefined && SENHA != undefined) {
-            const sql = await Database.rawQuery(
-                `
-            SELECT                                                                                       
-                multi_empresas.CD_MULTI_EMPRESA, 
-                multi_empresas.DS_MULTI_EMPRESA EMPRESA           
-            FROM                                                                                   
-                DBASGU.USUARIOS                  usuario                                            
-                ,DBAMV.USUARIO_MULTI_EMPRESA     usuario_multi_empresa                              
-                ,DBAMV.MULTI_EMPRESAS            multi_empresas                                     
-            WHERE                                                                                  
-                usuario.CD_USUARIO = :COD_USUARIO AND usuario.SN_ATIVO = 'S'
-            AND  
-                usuario.CD_USUARIO = usuario_multi_empresa.CD_ID_USUARIO
+        if (USUARIO != undefined && SENHA != undefined) 
+        {
+            const sql = await Database.rawQuery(`
+                SELECT                                                                                       
+                    multi_empresas.CD_MULTI_EMPRESA, 
+                    multi_empresas.DS_MULTI_EMPRESA EMPRESA           
+                FROM                                                                                   
+                    DBASGU.USUARIOS                  usuario                                            
+                    ,DBAMV.USUARIO_MULTI_EMPRESA     usuario_multi_empresa                              
+                    ,DBAMV.MULTI_EMPRESAS            multi_empresas                                     
+                WHERE                                                                                  
+                    usuario.CD_USUARIO = :COD_USUARIO AND usuario.SN_ATIVO = 'S'
+                AND  
+                    usuario.CD_USUARIO = usuario_multi_empresa.CD_ID_USUARIO
             `,
-                {
-                    COD_USUARIO: USUARIO
-                })
+            {
+                COD_USUARIO: USUARIO
+            })
 
             let empresa = sql;
             if (empresa[0]) {
@@ -127,17 +124,6 @@ export default class Controller {
             retorno
         })
 }
-
-
-    async teste ({ request, response } : HttpContextContract ) {
-        const username = request.input('username').toUpperCase();
-        const sql = await Database.rawQuery(` SELECT * FROM DBAADV.VIEW_HAM_GERENCIA_PENDENCIA`)
-
-        console.log(`username: ${username}`);
-        response.json(
-            sql
-        )
-    }
 
 
 }
